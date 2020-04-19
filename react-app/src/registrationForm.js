@@ -1,6 +1,5 @@
 import React from "react";
 import { Formik } from "formik";
-// import * as EmailValidator from "email-validator";
 import * as Yup from "yup";
 
 const RegistrationForm = () => (
@@ -8,10 +7,21 @@ const RegistrationForm = () => (
     <Formik
       initialValues={{ email: "", password: "" }}
       onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-        console.log("Logging in", values);
+        fetch("http://localhost:9000/user/register", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({
+            email: values.email,
+            password: values.password
+          })
+        })
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          console.log(data);
+        });
         setSubmitting(false);
-        }, 500);
       }}
 
       validationSchema={Yup.object().shape({
@@ -50,7 +60,7 @@ const RegistrationForm = () => (
               <div className="input-feedback">{errors.email}</div>
             )}
 
-            <label htmlFor="email">Password</label>
+            <label htmlFor="password">Password</label>
             <input
               name="password"
               type="password"
