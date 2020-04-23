@@ -7,12 +7,12 @@ const RegistrationForm = () => (
     <Formik
       initialValues={{ email: "", password: "" }}
       onSubmit={(values, { setSubmitting }) => {
-        fetch("http://localhost:9000/user/register", {
+        fetch("http://localhost:9000/register", {
           method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({
-            email: values.email,
-            password: values.password
+          headers: {"Content-Type": "application/x-www-form-urlencoded"},
+          body: new URLSearchParams({
+            "email": values.email,
+            "password": values.password
           })
         })
         .then(response => {
