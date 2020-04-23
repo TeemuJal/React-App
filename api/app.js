@@ -1,74 +1,102 @@
 var express = require("express");
 var cors = require("cors");
-var cookieParser = require('cookie-parser');
-var emailValidator = require("email-validator");
-var passwordValidator = require('password-validator');
-const bcrypt = require('bcrypt');
-const saltRounds = 12;
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const User = require("./model/User.model")
+const passport = require('passport');
 
 var app = express();
-
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
 mongoose.connect('mongodb://localhost/mydb', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
+mongoose.connection.on('error', error => console.log(error) );
+mongoose.Promise = global.Promise;
 
-const User = require("./src/User.model")
+require('./auth/auth');
 
-// Password validator schema
-var schema = new passwordValidator();
+app.use(bodyParser.urlencoded({ extended : false }));
 
-schema
-.is().min(8)
-.is().max(72)
-.has().digits()
-.has().not().spaces();
+const routes = require('./routes/routes');
+const secureRoutes = require('./routes/secure-routes');
 
-app.get("/", (req, res, next) => {
-    res.send("Hello world!");
-});
+// Standard routes
+app.use('/', routes);
 
-app.post("/user/register", (req, res, next) => {
-    console.log(req.body);
+// Routes that need token authentication
+app.use('/user', passport.authenticate('jwt', { session : false }), secureRoutes);
 
-    const userEmail = req.body.email;
-    const plaintextPassword = req.body.password;
+// app.post("/user/register", (req, res, next) => {
+//     console.log(req.body);
 
-    // Validate email and password on server-side as well
-    if (emailValidator.validate(userEmail) && schema.validate(plaintextPassword)) {
-        console.log("Valid email and password.");
+//     const userEmail = req.body.email;
+//     const plaintextPassword = req.body.password;
 
-        // TODO check if user with the email exists
+//     // Validate email and password on server-side as well
+//     if (emailValidator.validate(userEmail) && schema.validate(plaintextPassword)) {
+//         console.log("Valid email and password.");
 
-        bcrypt.hash(plaintextPassword, saltRounds, async function(err, hash) {
-            console.log("password hashed: " + hash);
+//         // TODO check if user with the email exists
 
-            const user = new User({ email: userEmail, password: hash });
+//         bcrypt.hash(plaintextPassword, saltRounds, async function(err, hash) {
+//             console.log("password hashed: " + hash);
 
-            await user.save().then(function () {
-                console.log("user created");
-            })
-            .catch(function (err) {
-                console.log("Registration failed.")
-                console.log(err)
-                res.status(400).send("Registration failed.");
-            });
-        });
-        res.type("json");
-        res.json("Registered successfully!");
-    }
-    else {
-        console.log("Invalid email/password.");
+//             const user = new User({ email: userEmail, password: hash });
 
-        res.status(400);
-        res.json("Invalid email/password.")
-    }
+//             await user.save().then(function () {
+//                 console.log("user created");
+//             })
+//             .catch(function (err) {
+//                 console.log("Registration failed.")
+//                 console.log(err)
+//                 res.status(400).send("Registration failed.");
+//             });
+//         });
+//         res.type("json").json("Registered successfully!");
+//     }
+//     else {
+//         console.log("Invalid email/password.");
+
+//         res.status(400).type("json").json("Invalid email/password.")
+//     }
+// });
+
+// app.post("/user/login", (req, res, next) => {
+//     console.log(req.body);
+
+//     const userEmail = req.body.email;
+//     const plaintextPassword = req.body.password;
+
+//     // Find email in DB
+//     User.findOne({ email: userEmail }, function(err, user) {
+//         if (user) {
+//             console.log("User exists");
+//             // Check if password matches
+//             bcrypt.compare(plaintextPassword, user.password, function(err, result) {
+//                 if (result) {
+//                     // Password matches
+//                     console.log("Password matches");
+//                     res.type("json").json("Logged in!");
+//                 }
+//                 else {
+//                     console.log("Password doesn't match.");
+//                     res.status(400).type("json").json("Wrong email/password");
+//                 }
+//             });
+//         }
+//         else {
+//             console.log("User doesn't exist.");
+//             res.status(400).type("json").json("Wrong email/password");
+//         }
+//     });
+// });
+
+//Handle errors
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({ error : err });
 });
 
 app.listen(9000, () => {
