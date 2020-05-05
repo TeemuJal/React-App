@@ -41,17 +41,15 @@ export default class App extends React.Component {
     })
     .then(data => {
       console.log(data);
-      this.setState({loggedIn: true});
+      this.setState({ loggedIn: true, redirect: "/posts"});
+
     })
     .catch(error => {
       console.log(error);
-      this.setState({loggedIn: false});
+      this.setState({loggedIn: false, redirect: "/login"});
     });
   }
   render() {
-    if (this.state.redirect) {
-      return <Redirect to={this.state.redirect} />
-    }    
   return (
     <div className="App">
         {/* Render Posts component only after loggedIn state has been checked */}
@@ -68,6 +66,10 @@ export default class App extends React.Component {
           path="/login" 
         />
         <Route exactly component={RegistrationForm} path="/register" />
+
+        {this.state.redirect !== false && (
+          <Redirect to={this.state.redirect} />
+        )}
     </div>
   );
 }

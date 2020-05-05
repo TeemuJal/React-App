@@ -39,9 +39,9 @@ export default class Login extends React.Component {
             })
             .then(data => {
               console.log(data.token);
+              localStorage.setItem("userToken", JSON.stringify(data.token));
               this.props.handler(true);
               this.setState({ isLoggedIn: true });
-              localStorage.setItem("userToken", JSON.stringify(data.token));
             })
             .catch(error => {
               this.setState({ error })
