@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import NewPostForm from './newPostForm';
 
 export default class Posts extends React.Component {
   constructor(props) {
@@ -23,7 +24,7 @@ export default class Posts extends React.Component {
   fetchPosts() {
     const token = this.state.token;
     // console.log(token);
-    const searchParams = new URLSearchParams({"secret_token": token})
+    const searchParams = new URLSearchParams({"secret_token": token});
     fetch(`http://localhost:9000/posts?${searchParams.toString()}`, {
       method: "GET"
     })
@@ -57,6 +58,8 @@ export default class Posts extends React.Component {
     } 
     return (
       <div className="posts">
+        <NewPostForm />
+
         {posts.map(post => (
           <div className="post" key={post._id}>
             <p><b>User:</b> {post.postedBy} <b>Posted on:</b> {new Date(post.datePosted).toString()}</p>
