@@ -5,7 +5,8 @@ const bcrypt = require("bcrypt");
 const PostSchema = new Schema({
     message: {
         type: String,
-        required: true
+        required: true,
+        maxlength : 255
     },
     postedBy: {
       type: mongoose.Schema.Types.ObjectId, 
