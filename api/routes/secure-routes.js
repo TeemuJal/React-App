@@ -30,7 +30,7 @@ router.post('/user/makePost', async (req, res, next) => {
 router.get('/posts', async (req, res, next) => {
   console.log("Get posts");
   try {
-    const postArray = await Post.find({});
+    const postArray = await Post.find({}).populate("postedBy");
     console.log("Posts fetched")
     res.json(JSON.stringify(postArray));
   }

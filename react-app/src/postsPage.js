@@ -62,7 +62,7 @@ export default class Posts extends React.Component {
 
         {posts.map(post => (
           <div className="post" key={post._id}>
-            <p><b>User:</b> {post.postedBy} <b>Posted on:</b> {new Date(post.datePosted).toString()}</p>
+            <p><b>Username:</b> {post.postedBy.username} <b>Posted on:</b> {new Date(post.datePosted).toString()}</p>
             <p><i>{post.message}</i></p>
           </div>
         ))}
