@@ -5,7 +5,6 @@ const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 const User = require('../model/User.model');
 
-// var emailValidator = require("email-validator");
 var passwordValidator = require('password-validator');
 
 // Schema for validating the password
