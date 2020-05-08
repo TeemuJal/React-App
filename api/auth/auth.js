@@ -5,57 +5,68 @@ const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 const User = require('../model/User.model');
 
-var emailValidator = require("email-validator");
+// var emailValidator = require("email-validator");
 var passwordValidator = require('password-validator');
 
-// Password validator schema
-var schema = new passwordValidator();
-schema.is().min(8)
+// Schema for validating the password
+var passwordSchema = new passwordValidator();
+passwordSchema.is().min(8)
       .is().max(72)
       .has().digits()
       .has().not().spaces();
 
+// Schema for validating the username
+var usernameSchema = new passwordValidator();
+usernameSchema.is().min(3)
+      .is().max(32)
+      .has("^[a-zA-Z0-9_]+$");
+
 // Passport middleware for registration
 passport.use('register', new localStrategy({
-  usernameField : 'email',
+  usernameField : 'username',
   passwordField : 'password'
-}, async (email, password, done) => {
+}, async (username, password, done) => {
     console.log("Register middleware");
     try {
+      if (usernameSchema.validate(username)) {
+        console.log("Valid username");
+      }
       // Validate email and password on server-side as well
-      if (emailValidator.validate(email) && schema.validate(password)) {
-        console.log("Valid email and password.");
+      if (usernameSchema.validate(username) && passwordSchema.validate(password)) {
+        console.log("Valid username and password.");
         
         // Create user in DB
-        const user = await User.create({ email, password });
+        const user = await User.create({ username, password });
         console.log("User created");
         return done(null, user);
       }
       else {
-        done("Invalid email/password.");
+        done("Invalid username/password.");
       }
     } 
     catch (error) {
-      done(error);
+      console.log(error.errmsg);
+      done("Something went wrong. Username could be taken.");
     }
 }));
 
 // Passport middleware for login
 passport.use('login', new localStrategy({
-  usernameField : 'email',
+  usernameField : 'username',
   passwordField : 'password'
-}, async (email, password, done) => {
+}, async (username, password, done) => {
   console.log("Login middleware");
   try {
-    const user = await User.findOne({ email });
+    // TODO figure out the possibility of a timing attack?
+    const user = await User.findOne({ username });
     if( !user ){
       console.log("User doesn't exist.");
-      return done(null, false, { message : 'Wrong email/password!'});
+      return done(null, false, { message : 'Wrong username/password!'});
     }
     const validate = await user.isValidPassword(password);
     if( !validate ){
       console.log("Password doesn't match.");
-      return done(null, false, { message : 'Wrong email/password!'});
+      return done(null, false, { message : 'Wrong username/password!'});
     }
     console.log("Password matches");
     return done(null, user, { message : 'Logged in!'});

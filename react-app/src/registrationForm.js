@@ -21,13 +21,13 @@ export default class RegistrationForm extends React.Component {
       <div>
         {error && <p>{error.message}</p>}
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ username: "", password: "" }}
           onSubmit={(values, { setSubmitting }) => {
             fetch("http://localhost:9000/register", {
               method: "POST",
               headers: {"Content-Type": "application/x-www-form-urlencoded"},
               body: new URLSearchParams({
-                "email": values.email,
+                "username": values.username,
                 "password": values.password
               })
             })
@@ -36,7 +36,7 @@ export default class RegistrationForm extends React.Component {
                 return response.json();
               }
               else {
-                throw new Error("Invalid email/password");
+                throw new Error("Invalid username/password");
               }
             })
             .then(data => {
@@ -50,9 +50,11 @@ export default class RegistrationForm extends React.Component {
           }}
 
           validationSchema={Yup.object().shape({
-            email: Yup.string()
-              .email()
-              .required("Required"),
+            username: Yup.string()
+              .required("Username is required.")
+              .min(3, "Minimum username length is 3.")
+              .max(32, "Maximum username length is 32.")
+              .matches(/^[a-zA-Z0-9_]+$/, "Username can only have characters, numbers or underscores."),
             password: Yup.string()
               .required("No password provided.")
               .min(8, "Password is too short - should be 8 chars minimum.")
@@ -71,18 +73,18 @@ export default class RegistrationForm extends React.Component {
             } = props;
             return (
               <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email</label>
+                <label htmlFor="username">Username</label>
                 <input
-                  name="email"
+                  name="username"
                   type="text"
-                  placeholder="Enter your email"
-                  value={values.email}
+                  placeholder="Enter your username"
+                  value={values.username}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={errors.email && touched.email && "error"}
+                  className={errors.username && touched.username && "error"}
                 />
-                {errors.email && touched.email && (
-                  <div className="input-feedback">{errors.email}</div>
+                {errors.username && touched.username && (
+                  <div className="input-feedback">{errors.username}</div>
                 )}
 
                 <label htmlFor="password">Password</label>

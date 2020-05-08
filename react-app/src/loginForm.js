@@ -25,7 +25,7 @@ export default class Login extends React.Component {
               method: "POST",
               headers: {"Content-Type": "application/x-www-form-urlencoded"},
               body: new URLSearchParams({
-                "email": values.email,
+                "username": values.username,
                 "password": values.password
               })
             })
@@ -34,7 +34,7 @@ export default class Login extends React.Component {
                 return response.json();
               }
               else {
-                throw new Error("Wrong email/password");
+                throw new Error("Wrong username/password");
               }
             })
             .then(data => {
@@ -61,19 +61,16 @@ export default class Login extends React.Component {
             } = props;
             return (
               <form onSubmit={handleSubmit}>
-                <label htmlFor="email">Email</label>
+                <label htmlFor="username">Username</label>
                 <input
-                  name="email"
+                  name="username"
                   type="text"
-                  placeholder="Enter your email"
-                  value={values.email}
+                  placeholder="Enter your username"
+                  value={values.username}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  className={errors.email && touched.email && "error"}
+                  className={errors.username && touched.username && "error"}
                 />
-                {errors.email && touched.email && (
-                  <div className="input-feedback">{errors.email}</div>
-                )}
 
                 <label htmlFor="password">Password</label>
                 <input
@@ -85,10 +82,6 @@ export default class Login extends React.Component {
                   onBlur={handleBlur}
                   className={errors.password && touched.password && "error"}
                 />
-                {errors.password && touched.password && (
-                  <div className="input-feedback">{errors.password}</div>
-                )}
-
                 <button type="submit" disabled={isSubmitting}>
                   Login
                 </button>
