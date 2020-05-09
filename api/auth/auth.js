@@ -77,7 +77,7 @@ passport.use('login', new localStrategy({
 
 // Verify token
 passport.use(new JWTstrategy({
-  secretOrKey : 'top_secret',
+  secretOrKey : process.env.JWT_SECRET,
   jwtFromRequest : ExtractJWT.fromUrlQueryParameter('secret_token')
 }, async (token, done) => {
   try {
