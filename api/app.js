@@ -1,4 +1,5 @@
 var express = require("express");
+require('dotenv').config()
 var cors = require("cors");
 const bodyParser = require('body-parser');
 // TODO check how secure MongoDB is for user management
