@@ -17,6 +17,9 @@ mongoose.connect('mongodb://localhost/mydb', {
 mongoose.connection.on('error', error => console.log(error) );
 mongoose.Promise = global.Promise;
 
+const User = require('./model/User.model');
+createDummyUser();
+
 require('./auth/auth');
 
 app.use(bodyParser.urlencoded({ extended : false }));
@@ -39,3 +42,10 @@ app.use(function(err, req, res, next) {
 app.listen(9000, () => {
     console.log("Server running on port 9000");
 });
+
+// Creates a dummy user if it doesn't exist. 
+// Dummy user is used in trying to prevent timing attacks by checking 
+// the dummy user's password when the user doesn't exist.
+function createDummyUser() {
+  User.findOne({ username: "aa"}).then(user => user || User.create({username: "aa", password: "u1%7Cc"}));
+}

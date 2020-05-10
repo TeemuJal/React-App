@@ -56,13 +56,23 @@ passport.use('login', new localStrategy({
 }, async (username, password, done) => {
   console.log("Login middleware");
   try {
-    // TODO figure out the possibility of a timing attack?
-    const user = await User.findOne({ username });
+    // Dummy user used against timing attacks when the user doesn't exist
+    const dummyUser = await User.findOne({ username: "aa"});
+
+    let validate = undefined;
+    let user = undefined;
+    // Find real user if username provided isn't the dummy user's username (real username > 2 chrs)
+    if (username !== "aa") {
+      user = await User.findOne({ username });
+    }
     if( !user ){
       console.log("User doesn't exist.");
-      return done(null, false, { message : 'Wrong username/password!'});
+      // Validate dummy user's password (always fails), should prevent timing attacks
+      validate = await dummyUser.isValidPassword("sdffffffflksjdfii");
     }
-    const validate = await user.isValidPassword(password);
+    else {
+      validate = await user.isValidPassword(password);
+    }
     if( !validate ){
       console.log("Password doesn't match.");
       return done(null, false, { message : 'Wrong username/password!'});
