@@ -19,7 +19,7 @@ export default class Login extends React.Component {
       <div>
         {error && <p>{error.message}</p>}
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ username: "", password: "" }}
           onSubmit={(values, { setSubmitting }) => {
             fetch("http://localhost:9000/login", {
               method: "POST",
