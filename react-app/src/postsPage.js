@@ -3,6 +3,8 @@ import { Redirect } from 'react-router-dom';
 import NewPostForm from './newPostForm';
 
 export default class Posts extends React.Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -15,6 +17,7 @@ export default class Posts extends React.Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.fetchPosts();
     this.interval = setInterval(() => {
       this.fetchPosts();
@@ -36,11 +39,16 @@ export default class Posts extends React.Component {
         throw new Error("Something went wrong.");
       }
     })
-    .then(data => this.setState({ posts: JSON.parse(data) }))
+    .then(data => {
+      if (this._isMounted) {
+        this.setState({ posts: JSON.parse(data) });
+      }
+    })
     .catch(error => console.log(error));
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     clearInterval(this.interval);
   }
 
