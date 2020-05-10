@@ -8,7 +8,11 @@ const passport = require('passport');
 
 var app = express();
 // TODO check proper use of CORS if it's even needed
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:3000', // allow development frontend
+  optionsSuccessStatus: 200
+}
+app.use(cors(corsOptions));
 
 mongoose.connect('mongodb://localhost/mydb', {
   useNewUrlParser: true,
