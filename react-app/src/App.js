@@ -4,6 +4,7 @@ import { Route, Redirect } from 'react-router-dom';
 import Login from './loginForm';
 import RegistrationForm from './registrationForm';
 import Posts from './postsPage';
+import Nav from './nav';
 
 const initialState = {
   loggedIn: null
@@ -52,20 +53,43 @@ export default class App extends React.Component {
   render() {
   return (
     <div className="App">
-        {/* Render Posts component only after loggedIn state has been checked */}
+        {/* Render components only after loggedIn state has been checked */}
         {this.state.loggedIn !== null && (
           <Route 
             exactly 
-            render={(props) => <Posts {...props} loggedIn={this.state.loggedIn} />} 
+            render={(props) => (
+              <div>
+                <Nav {...props} loggedIn={this.state.loggedIn} handler={this.handler} />
+                <Posts {...props} loggedIn={this.state.loggedIn} />
+              </div>
+            )} 
             path="/posts" 
           />
         )}
+        {this.state.loggedIn !== null && (
         <Route 
           exactly 
-          render={(props) => <Login {...props} handler={this.handler} />} 
+            render={(props) => (
+              <div>
+                <Nav {...props} loggedIn={this.state.loggedIn} handler={this.handler} />
+                <Login {...props} handler={this.handler} />
+              </div>
+            )}
           path="/login" 
         />
-        <Route exactly component={RegistrationForm} path="/register" />
+        )}
+        {this.state.loggedIn !== null && (
+          <Route 
+            exactly 
+            render={(props) => (
+              <div>
+                <Nav {...props} loggedIn={this.state.loggedIn} handler={this.handler} />
+                <RegistrationForm/>
+              </div>
+            )}
+            path="/register" 
+          />
+        )}
 
         {this.state.redirect !== false && (
           <Redirect to={this.state.redirect} />
