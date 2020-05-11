@@ -1,5 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
+import moment from 'moment';
 import NewPostForm from './newPostForm';
 
 export default class Posts extends React.Component {
@@ -70,7 +71,10 @@ export default class Posts extends React.Component {
 
         {posts.map(post => (
           <div className="post" key={post._id}>
-            <p><b>Username:</b> {post.postedBy.username} <b>Posted on:</b> {new Date(post.datePosted).toString()}</p>
+            <p>
+              <b>Username:</b> {post.postedBy.username} 
+              <b> Posted on:</b> {moment(new Date(post.datePosted)).format('MMMM Do YYYY, h:mm:ss a')}
+            </p>
             <p><i>{post.message}</i></p>
           </div>
         ))}
