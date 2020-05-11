@@ -10,6 +10,7 @@ export default class Nav extends React.Component {
   }
   logoutHandler = (e) => {
     localStorage.removeItem("userToken");
+    localStorage.removeItem("username");
     this.props.handler(false);
     this.props.history.push('/login');
   }
