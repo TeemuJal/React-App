@@ -56,6 +56,11 @@ passport.use('login', new localStrategy({
 }, async (username, password, done) => {
   console.log("Login middleware");
   try {
+    // Validate credentials on login to prevent possible injection attacks with the username
+    // and save time by skipping database operations
+    if (!usernameSchema.validate(username) || !passwordSchema.validate(password)) {
+      return done(null, false, { message : 'Wrong username/password!'});
+    }
     // Dummy user used against timing attacks when the user doesn't exist
     const dummyUser = await User.findOne({ username: "aa"});
 
