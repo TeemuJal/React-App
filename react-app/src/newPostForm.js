@@ -34,6 +34,7 @@ export default class NewPostForm extends React.Component {
           })
           .then(data => {
             console.log(data);
+            values.message = "";
           })
           .catch(error => {
             console.log(error);
