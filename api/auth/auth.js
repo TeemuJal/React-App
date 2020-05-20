@@ -12,7 +12,8 @@ var passwordSchema = new passwordValidator();
 passwordSchema.is().min(8)
       .is().max(72)
       .has().digits()
-      .has().not().spaces();
+      .has().not().spaces()
+      .has("(?=.*[A-Z])");
 
 // Schema for validating the username
 var usernameSchema = new passwordValidator();
@@ -44,7 +45,7 @@ passport.use('register', new localStrategy({
       }
     } 
     catch (error) {
-      console.log(error.errmsg);
+      console.log(error);
       done("Something went wrong. Username could be taken.");
     }
 }));
