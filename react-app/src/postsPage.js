@@ -12,9 +12,9 @@ export default class Posts extends React.Component {
       redirect: false,
       loggedIn: props.loggedIn,
       token: JSON.parse(localStorage.getItem("userToken")),
+      username: JSON.parse(localStorage.getItem("username")),
       posts: []
     };
-    console.log("Posts logged in state: " + this.state.loggedIn);
   }
 
   componentDidMount() {
@@ -53,6 +53,24 @@ export default class Posts extends React.Component {
     .catch(error => console.log(error));
   }
 
+  deletePost(postId) {
+    const token = this.state.token;
+    // console.log(token);
+    const searchParams = new URLSearchParams({"secret_token": token});
+    console.log(postId);
+    fetch(`http://localhost:9000/posts/${postId}?${searchParams.toString()}`, {
+      method: "DELETE"
+    })
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      console.log(data);
+      this.fetchPosts();
+    })
+    .catch(error => console.log(error));
+  }
+
   componentWillUnmount() {
     this._isMounted = false;
     clearInterval(this.interval);
@@ -81,6 +99,14 @@ export default class Posts extends React.Component {
               <b> Posted on:</b> {moment(new Date(post.datePosted)).format('MMMM Do YYYY, h:mm:ss a')}
             </p>
             <p><i>{post.message}</i></p>
+            {/*Render button to delete post if it's posted by the logged in user*/}
+            {(() => {
+              if(post.postedBy.username === this.state.username) {
+                return(
+                  <button onClick={e => this.deletePost(post._id)}>Delete</button>
+                )
+              }
+            })()}
           </div>
         ))}
       </div>
