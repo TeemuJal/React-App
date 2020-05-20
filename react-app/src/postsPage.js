@@ -37,6 +37,11 @@ export default class Posts extends React.Component {
         return response.json();
       }
       else {
+        if (response.status === 401) {
+          if (this._isMounted) {
+            this.setState({ redirect: true });
+          }
+        }
         throw new Error("Something went wrong.");
       }
     })
