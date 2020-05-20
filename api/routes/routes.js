@@ -21,7 +21,10 @@ router.post('/login', async (req, res, next) => {
       req.login(user, { session : false }, async (error) => {
         if( error ) return next(error);
         const body = { _id : user._id, username : user.username };
-        const token = jwt.sign({ user : body }, process.env.JWT_SECRET);
+        const token = jwt.sign({ 
+          exp : Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60), // 7 day expiration
+          user : body 
+        }, process.env.JWT_SECRET);
         return res.json({ token, username: user.username });
       });     
     } 
