@@ -8,12 +8,12 @@
     "@testing-library/user-event": "^7.2.1",
     "email-validator": "^2.0.4",
     "formik": "^2.1.4",
-    "moment": "^2.25.3",
+    "moment": "^2.26.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1",
-    "yup": "^0.28.3"
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^3.4.1",
+    "yup": "^0.28.5"
   },
   "scripts": {
     "start": "react-scripts start",
