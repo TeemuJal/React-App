@@ -18,7 +18,6 @@ export default class App extends React.Component {
   };
   
   handler = (val) => {
-    console.log(val);
     this.setState({
       loggedIn: val
     })
@@ -27,7 +26,7 @@ export default class App extends React.Component {
     const token = this.state.token;
     // console.log(token);
     const searchParams = new URLSearchParams({"secret_token": token})
-    // Check whether user is logged in TODO: token not in url
+    // Check whether user is logged in
     fetch(`http://localhost:9000/user/authenticate?${searchParams.toString()}`, {
       method: "GET",
       headers: {"Content-Type": "application/x-www-form-urlencoded"}
@@ -50,9 +49,9 @@ export default class App extends React.Component {
       this.setState({loggedIn: false, redirect: "/login"});
     });
   }
-  render() {
-  return (
-    <div className="App">
+  render() {   
+    return (
+      <div className="App">
         {/* Render components only after loggedIn state has been checked */}
         {this.state.loggedIn !== null && (
           <Route 
@@ -67,16 +66,16 @@ export default class App extends React.Component {
           />
         )}
         {this.state.loggedIn !== null && (
-        <Route 
-          exactly 
+          <Route 
+            exactly 
             render={(props) => (
               <div>
                 <Nav {...props} loggedIn={this.state.loggedIn} handler={this.handler} />
                 <Login {...props} handler={this.handler} />
               </div>
             )}
-          path="/login" 
-        />
+            path="/login" 
+          />
         )}
         {this.state.loggedIn !== null && (
           <Route 
@@ -94,7 +93,7 @@ export default class App extends React.Component {
         {this.state.redirect !== false && (
           <Redirect to={this.state.redirect} />
         )}
-    </div>
-  );
-}
+      </div>
+    );
+  }
 }
